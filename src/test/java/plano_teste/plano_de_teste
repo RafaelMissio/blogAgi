@@ -1,0 +1,20 @@
+Cenários de Teste – Funcionalidade de Busca
+CT-001 — Busca com termo válido
+Objetivo: Validar que a busca retorna artigos quando um termo existente é informado.
+Dados de teste: cartão
+Resultado esperado: A URL deve conter ?s=cartão e ao menos um artigo deve ser exibido.
+
+CT-002 — Busca com termo inexistente
+Objetivo: Validar o comportamento quando a busca não retorna artigos.
+Dados de teste: xpto123termoInexistente
+Resultado esperado: Nenhum artigo exibido e mensagem de nenhum resultado visível.
+
+CT-003 — Busca com campo vazio
+Objetivo: Validar o comportamento da busca quando nenhum termo é informado.
+Dados de teste: campo vazio
+Resultado esperado: A busca retorna uma lista padrão de artigos.
+
+CT-004 — Busca com caracteres especiais
+Objetivo: Validar a robustez da busca ao receber termos com caracteres especiais.
+Dados de teste: cart@o
+Resultado esperado: Nenhum artigo exibido e mensagem de nenhum resultado apresentada.
