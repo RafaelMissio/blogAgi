@@ -50,7 +50,7 @@ public class DriverFactory {
 
                 driver = new ChromeDriver(options);
 
-                driver.manage().window().setSize(new Dimension(1920, 1080));
+                //driver.manage().window().setSize(new Dimension(1920, 1080));
 
 
                 ((JavascriptExecutor) driver)
