@@ -41,10 +41,12 @@ public class DriverFactory {
                             "--headless",
                             "--window-size=1920,1080",
                             "--disable-gpu",
+                            "--no-sandbox",
                             "--disable-dev-shm-usage",
-                            "--no-sandbox"
+                            "--remote-allow-origins=*"
                     );
                 }
+
 
                 driver = new ChromeDriver(options);
 
