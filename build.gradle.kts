@@ -45,6 +45,7 @@ tasks.withType<Test>().configureEach {
     systemProperty("junit.jupiter.execution.parallel.mode.default", "same_thread")
     systemProperty("junit.jupiter.execution.parallel.mode.classes.default", "same_thread")
 
+
     testLogging {
         events(
             org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED,
