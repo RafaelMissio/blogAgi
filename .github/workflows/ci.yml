@@ -12,47 +12,56 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 30
 
+    env:
+      CI: "true"
+      BROWSER: "chrome"
+      HEADLESS: "true"
+      TZ: "America/Sao_Paulo"
+
     steps:
-      # Checkout
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # Instalar Chrome + ChromeDriver COMPATÍVEIS
       - name: Setup Chrome (with ChromeDriver)
         uses: browser-actions/setup-chrome@v1
         with:
           chrome-version: stable
           install-chromedriver: true
 
-      - name: Verify Chrome
+      - name: Verify Chrome & Chromedriver
         run: |
-          google-chrome --version
+          google-chrome --version || google-chrome-stable --version
           chromedriver --version
+          which chromedriver || true
 
-      # Java 21
       - name: Set up JDK 21
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin'
+          distribution: temurin
           java-version: '21'
           cache: gradle
 
-      # Permissão Gradle
       - name: Grant execute permission for Gradle
         run: chmod +x gradlew
 
-      # Executar testes com Xvfb (CRÍTICO)
-      - name: Run tests (Xvfb)
-        run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" ./gradlew clean test
-        env:
-          TZ: America/Sao_Paulo
+      - name: Install system dependencies (Xvfb + libs)
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y xvfb libgtk-3-0 libxss1 libasound2 fonts-liberation
+        shell: bash
 
-      # Gerar relatório Allure
+      - name: Run tests (Xvfb)
+        run: xvfb-run --auto-servernum --server-args="-screen 0 1920x1080x24" ./gradlew clean test --no-daemon --stacktrace
+        env:
+          BROWSER: ${{ env.BROWSER }}
+          HEADLESS: ${{ env.HEADLESS }}
+          CI: ${{ env.CI }}
+          TZ: ${{ env.TZ }}
+
       - name: Generate Allure Report
         if: always()
-        run: ./gradlew allureReport
+        run: ./gradlew allureReport --no-daemon || true
 
-      # Upload relatório Allure
       - name: Upload Allure Report
         if: always()
         uses: actions/upload-artifact@v4
@@ -60,7 +69,6 @@ jobs:
           name: allure-report
           path: build/reports/allure-report
 
-      # Upload resultados Allure (debug)
       - name: Upload Allure Results
         if: always()
         uses: actions/upload-artifact@v4
