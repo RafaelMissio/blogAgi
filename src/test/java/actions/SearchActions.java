@@ -1,5 +1,7 @@
 package actions;
 
+import core.driver.DriverFactory;
+import core.utils.AllureAttachments;
 import io.qameta.allure.Step;
 import pages.SearchPage;
 
@@ -11,15 +13,16 @@ public class SearchActions {
         this.searchPage = new SearchPage();
     }
 
-    @Step("Buscar por termo válido: {term}")
-    public boolean searchValidTerm(String term) {
+    @Step("Buscar por termo: {term}")
+    public void search(String term) {
         searchPage.searchFor(term);
-        return searchPage.hasResults();
     }
 
-    @Step("Buscar por termo inexistente: {term}")
-    public boolean searchInvalidTerm(String term) {
-        searchPage.searchFor(term);
-        return searchPage.hasNoResultsMessage() && !searchPage.hasResults();
+    @Step("Resultado final da busca")
+    public void attachFinalState() {
+        AllureAttachments.screenshot(
+                DriverFactory.getDriver(),
+                "FINAL"
+        );
     }
 }

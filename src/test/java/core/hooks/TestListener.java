@@ -1,26 +1,34 @@
 package core.hooks;
 
-import base.BaseTest;
-import io.qameta.allure.Attachment;
-import org.junit.jupiter.api.extension.*;
+import core.driver.DriverFactory;
+import core.utils.AllureAttachments;
+import org.junit.jupiter.api.extension.ExtensionContext;
+import org.junit.jupiter.api.extension.TestWatcher;
 
-public class TestListener implements TestWatcher, BeforeTestExecutionCallback {
+public class TestListener implements TestWatcher {
+
+    @Override
+    public void testSuccessful(ExtensionContext context) {
+        attachEvidence("SUCESSO");
+        DriverFactory.quitDriver();
+    }
 
     @Override
     public void testFailed(ExtensionContext context, Throwable cause) {
-        Object testInstance = context.getRequiredTestInstance();
-        if (testInstance instanceof BaseTest baseTest) {
-            saveScreenshot(baseTest.takeScreenshot());
+        attachEvidence("FALHA");
+        DriverFactory.quitDriver();
+    }
+
+    private void attachEvidence(String status) {
+        if (DriverFactory.getDriver() != null) {
+            AllureAttachments.screenshot(
+                    DriverFactory.getDriver(),
+                    status
+            );
+            AllureAttachments.pageSource(
+                    DriverFactory.getDriver(),
+                    status
+            );
         }
-    }
-
-    @Attachment(value = "Screenshot on Failure", type = "image/png")
-    public byte[] saveScreenshot(byte[] screenshot) {
-        return screenshot;
-    }
-
-    @Override
-    public void beforeTestExecution(ExtensionContext context) {
-        // Poderia logar início do teste, anexar info de ambiente etc.
     }
 }

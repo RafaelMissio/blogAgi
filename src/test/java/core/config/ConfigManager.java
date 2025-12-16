@@ -30,9 +30,6 @@ public class ConfigManager {
         return System.getProperty(key, properties.getProperty(key));
     }
 
-    public static int getInt(String key) {
-        return Integer.parseInt(get(key));
-    }
 
     public static boolean getBoolean(String key) {
         return Boolean.parseBoolean(get(key));

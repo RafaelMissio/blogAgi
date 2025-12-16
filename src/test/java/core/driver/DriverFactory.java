@@ -2,7 +2,7 @@ package core.driver;
 
 import core.config.ConfigManager;
 import io.github.bonigarcia.wdm.WebDriverManager;
-import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.*;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.edge.EdgeDriver;
@@ -24,34 +24,58 @@ public class DriverFactory {
     private static void createDriver() {
         String browser = ConfigManager.get("browser");
         boolean headless = ConfigManager.getBoolean("headless");
-        int implicitWait = ConfigManager.getInt("implicit.wait");
-        int pageLoadTimeout = ConfigManager.getInt("page.load.timeout");
 
         WebDriver driver;
 
         switch (browser.toLowerCase()) {
+
             case "chrome" -> {
                 WebDriverManager.chromedriver().setup();
+
                 ChromeOptions options = new ChromeOptions();
+
+                options.setPageLoadStrategy(PageLoadStrategy.NORMAL);
+
                 if (headless) {
-                    options.addArguments("--headless=new");
+                    options.addArguments(
+                            "--headless",
+                            "--window-size=1920,1080",
+                            "--disable-gpu",
+                            "--disable-dev-shm-usage",
+                            "--no-sandbox"
+                    );
                 }
-                options.addArguments("--start-maximized");
+
                 driver = new ChromeDriver(options);
+
+                driver.manage().window().setSize(new Dimension(1920, 1080));
+
+
+                ((JavascriptExecutor) driver)
+                        .executeScript("window.scrollTo(0, document.body.scrollHeight);");
+                ((JavascriptExecutor) driver)
+                        .executeScript("window.scrollTo(0, 0);");
             }
+
             case "firefox" -> {
                 WebDriverManager.firefoxdriver().setup();
                 driver = new FirefoxDriver();
+                driver.manage().window().setSize(new Dimension(1920, 1080));
             }
+
             case "edge" -> {
                 WebDriverManager.edgedriver().setup();
                 driver = new EdgeDriver();
+                driver.manage().window().setSize(new Dimension(1920, 1080));
             }
-            default -> throw new RuntimeException("Navegador não suportado: " + browser);
+
+            default -> throw new RuntimeException(
+                    "Navegador não suportado: " + browser
+            );
         }
 
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(implicitWait));
-        driver.manage().timeouts().pageLoadTimeout(Duration.ofSeconds(pageLoadTimeout));
+
+        driver.manage().timeouts().implicitlyWait(Duration.ZERO);
 
         driverThread.set(driver);
     }
@@ -64,4 +88,3 @@ public class DriverFactory {
         }
     }
 }
-
