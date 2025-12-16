@@ -10,6 +10,12 @@ repositories {
     mavenCentral()
 }
 
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
+}
+
 val junitVersion = "5.10.2"
 val seleniumVersion = "4.23.0"
 val allureJunit5Version = "2.27.0"
@@ -25,11 +31,26 @@ dependencies {
     testImplementation("org.slf4j:slf4j-simple:$slf4jVersion")
 }
 
-tasks.test {
+tasks.withType<Test>().configureEach {
+
     useJUnitPlatform()
-    systemProperty("junit.jupiter.extensions.autodetection.enabled", "true")
+    maxParallelForks = 1
+
+    // 🔐 UTF-8 GARANTIDO NA JVM DOS TESTES
+    systemProperty("file.encoding", "UTF-8")
+    jvmArgs("-Dfile.encoding=UTF-8")
+
+    // 🔒 Execução sequencial (JUnit 5)
+    systemProperty("junit.jupiter.execution.parallel.enabled", "false")
+    systemProperty("junit.jupiter.execution.parallel.mode.default", "same_thread")
+    systemProperty("junit.jupiter.execution.parallel.mode.classes.default", "same_thread")
+
     testLogging {
-        events("PASSED", "FAILED", "SKIPPED")
+        events(
+            org.gradle.api.tasks.testing.logging.TestLogEvent.PASSED,
+            org.gradle.api.tasks.testing.logging.TestLogEvent.FAILED,
+            org.gradle.api.tasks.testing.logging.TestLogEvent.SKIPPED
+        )
     }
 }
 

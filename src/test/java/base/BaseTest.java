@@ -2,16 +2,13 @@ package base;
 
 import core.config.ConfigManager;
 import core.driver.DriverFactory;
-import core.hooks.TestListener;
 import io.qameta.allure.Step;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.TakesScreenshot;
+
 import org.openqa.selenium.WebDriver;
 
-@ExtendWith(TestListener.class)
+
 public abstract class BaseTest {
 
     protected WebDriver driver;
@@ -22,6 +19,11 @@ public abstract class BaseTest {
     public void setUp() {
         driver = DriverFactory.getDriver();
         baseUrl = ConfigManager.get("base.url");
+
+        if (baseUrl == null || baseUrl.isBlank()) {
+            throw new IllegalStateException("base.url não pode ser nulo ou vazio");
+        }
+
         driver.get(baseUrl);
     }
 
@@ -31,12 +33,4 @@ public abstract class BaseTest {
         DriverFactory.quitDriver();
     }
 
-    @Step("Capturando screenshot")
-    public byte[] takeScreenshot() {
-        try {
-            return ((TakesScreenshot) driver).getScreenshotAs(OutputType.BYTES);
-        } catch (Exception e) {
-            return null;
-        }
-    }
 }
