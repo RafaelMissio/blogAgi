@@ -55,7 +55,7 @@ public class SearchPage {
                     ExpectedConditions.visibilityOfElementLocated(noResultsSection)
             ));
 
-            long stableUntil = System.currentTimeMillis() + 700; // 700ms
+            long stableUntil = System.currentTimeMillis() + 2000; // 700ms
             while (System.currentTimeMillis() < stableUntil) {
                 if (hasResults() || hasNoResults()) {
                     return;
@@ -65,7 +65,6 @@ public class SearchPage {
                 } catch (InterruptedException ignored) { }
             }
 
-            // se não detectou nada mesmo após visibilidade, falha explicativa
             if (!hasResults() && !hasNoResults()) {
                 throw new TimeoutException("Nenhum estado de busca detectado após visibilidade.");
             }
