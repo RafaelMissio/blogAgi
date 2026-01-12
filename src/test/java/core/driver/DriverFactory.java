@@ -41,14 +41,16 @@ public class DriverFactory {
                             "--headless",
                             "--window-size=1920,1080",
                             "--disable-gpu",
+                            "--no-sandbox",
                             "--disable-dev-shm-usage",
-                            "--no-sandbox"
+                            "--remote-allow-origins=*"
                     );
                 }
 
+
                 driver = new ChromeDriver(options);
 
-                driver.manage().window().setSize(new Dimension(1920, 1080));
+                //driver.manage().window().setSize(new Dimension(1920, 1080));
 
 
                 ((JavascriptExecutor) driver)
