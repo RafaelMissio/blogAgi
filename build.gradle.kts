@@ -1,5 +1,6 @@
 plugins {
-    id("java")
+    id("java");
+    id("io.qameta.allure") version "2.12.0"
 }
 
 group = "br.com.missio"
@@ -19,8 +20,18 @@ dependencies {
     testImplementation("com.codeborne:selenide:7.6.0")
     testImplementation("org.slf4j:slf4j-simple:2.0.16")
 
+    testImplementation("io.qameta.allure:allure-junit5:2.25.0")
+
 }
 
 tasks.test {
     useJUnitPlatform()
+}
+
+allure {
+    version = "2.32.0"
+    adapter {
+        autoconfigure = true
+        aspectjWeaver = true
+    }
 }
